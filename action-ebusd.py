@@ -44,7 +44,7 @@ def action_wrapper(hermes, intentMessage, conf):
     """
     intentname = intentMessage.intent.intent_name.split(':')[1]
 
-    ebus = SnipsEbusd(conf["secret"]["ipaddress"])
+    ebus = SnipsEbusd(conf["secret"]["ebuds_mqtt_ip"])
 
     if intentname == "SetWaterTemp":
 	conn = ebus.setHwcQuickVetoTemp()
