@@ -44,14 +44,19 @@ def action_wrapper(hermes, intentMessage, conf):
     """
     intentname = intentMessage.intent.intent_name.split(':')[1]
 
-    ebus = SnipsEbusd(conf["secret"]["ebuds_mqtt_ip"])
+    ebus = SnipsEbusd(conf["secret"]["ebusd_mqtt_ip"])
 
-    if intentname == "SetWaterTemp":
-	conn = ebus.setHwcQuickVetoTemp()
+    if intentname == "SetHwcQuickVetoTemp":
+	conn = ebus.setHwcQuickVetoTemp("52")
 	result_sentence = u'Die Wassertemperatur wurde auf 52 Grad gesetzt'
 
     hermes.publish_end_session(intentMessage.session_id, result_sentence.encode('utf-8'))
 
+    if intentname == "GetHwcQuickVetoTemp":
+	conn = ebus.getHwcQuickVetoTemp("52")
+	result_sentence = u'Die QuickVetoTemperatur ist %s Grad.' %(conn)
+
+    hermes.publish_end_session(intentMessage.session_id, result_sentence.encode('utf-8'))
 
 if __name__ == "__main__":
     with Hermes("localhost:1883") as h:
