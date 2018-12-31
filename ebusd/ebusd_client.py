@@ -9,12 +9,12 @@ class SnipsEbusd(object):
 	    self.client.connect(broker)#connect
 
 	def setHwcQuickVetoTemp(self,temp):
-	    self.client.publish("sonoff_ebus/430/HwcQuickVetoTemp/set",temp)#publish
+	    self.client.publish("ebusd/430/HwcQuickVetoTemp/set",temp)#publish
 	    #self.client.disconnect() #disconnect
 	    return True
 
 	def getHwcQuickVetoTemp(self):
-	    HwcQuickVetoTemp = self.client.publish("sonoff_ebus/430/HwcQuickVetoTemp/get")#publish
+	    HwcQuickVetoTemp = self.client.publish("ebusd/430/HwcQuickVetoTemp/get")#publish
 	    #self.client.disconnect() #disconnect
 	    return HwcQuickVetoTemp
 
