@@ -50,11 +50,13 @@ def action_wrapper(hermes, intentMessage, conf):
 	conn = ebus.setHwcQuickVetoTemp("52")
 	result_sentence = u'Die Wassertemperatur wurde auf 52 Grad gesetzt'
 
-    hermes.publish_end_session(intentMessage.session_id, result_sentence.encode('utf-8'))
-
     if intentname == "GetHwcQuickVetoTemp":
 	conn = ebus.getHwcQuickVetoTemp("52")
 	result_sentence = u'Die QuickVetoTemperatur ist %s Grad.' %(conn)
+
+    if intentname == "GetHeatingCurve":
+	conn = ebus.getHeatingCurve()
+	result_sentence = u'Die Heizkurve ist %s.' %(conn)
 
     hermes.publish_end_session(intentMessage.session_id, result_sentence.encode('utf-8'))
 
