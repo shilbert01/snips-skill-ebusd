@@ -9,6 +9,7 @@ from hermes_python.ontology import *
 import io
 from ebusd.ebusd_client import SnipsEbusd
 
+
 CONFIGURATION_ENCODING_FORMAT = "utf-8"
 CONFIG_INI = "config.ini"
 
@@ -55,8 +56,12 @@ def action_wrapper(hermes, intentMessage, conf):
 	result_sentence = u'Die QuickVetoTemperatur ist %s Grad.' %(conn)
 
     if intentname == "GetHeatingCurve":
-	conn = ebus.getHeatingCurve()
-	result_sentence = u'Die Heizkurve ist %s.' %(conn)
+	hcurve = ebus.getHeatingCurve()
+	result_sentence = u'Die Heizkurve ist %s.' %(hcurve)
+
+    if intentname == "SetHeatingCurve":
+	hcurve = ebus.setHeatingCurve("0.3")
+	result_sentence = u'Die Heizkurve wurde auf %s gesetzt.' %(hcurve)
 
     hermes.publish_end_session(intentMessage.session_id, result_sentence.encode('utf-8'))
 

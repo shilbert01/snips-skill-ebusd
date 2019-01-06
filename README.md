@@ -1,4 +1,4 @@
-# Snips Fritz!Box connector
+# Snips  heating system connector eBUS (e.g. Vaillant) connector
 [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/snipsco/snips-skill-owm/master/LICENSE.txt)
 
 This is a Snips action to interact with your heating system via ebusd. It is written in Python and is compatible with `snips-skill-server`.
