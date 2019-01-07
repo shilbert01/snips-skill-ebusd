@@ -66,14 +66,19 @@ class SnipsEbusd(object):
 	    return results
 
 	def getHwcQuickVetoTemp(self):
-	    HwcQuickVetoTemp = self.client.publish("ebusd/430/HwcQuickVetoTemp/get")#publish
-	    #self.client.disconnect() #disconnect
-	    return HwcQuickVetoTemp
+	    topic = "ebusd/430/HwcQuickVetoTemp" #publish
+	    pub_topic, pub_msg = topic+"/get", "HwcQuickVetoTemp"
+	    result = self.mqtt_messenger(topic,pub_topic,pub_msg)
+	    return result
 
 	def setHwcQuickVetoTemp(self,temp):
-	    client.publish("ebusd/430/HwcQuickVetoTemp/set",temp)#publish
-	    #time.sleep(2) # sleep 2 seconds and then subscribe to mqtt message 'HwcQuickVetoTemp' - this results in ebusd/430/HwcQuickVetoTemp {"temp1": {"value": 44.0}}
-	    return True
+	    result = 0
+	    topic = "ebusd/430/HwcQuickVetoTemp"#publish
+	    pub_topic, pub_msg = topic+"/set", temp
+	    while result != temp:
+		result = self.mqtt_messenger(topic,pub_topic,pub_msg)
+		print("result",result,"temp",temp)
+	    return result
 
 	def getHeatingCurve(self):
 	    topic = "sonoff_ebus/mc/HeatingCurve/curve" #publish
@@ -82,14 +87,10 @@ class SnipsEbusd(object):
 	    return result
 
 	def setHeatingCurve(self,curve):
+	    result = 0
 	    topic = "sonoff_ebus/mc/HeatingCurve/curve" #publish
 	    pub_topic, pub_msg = topic+"/set", curve
-	    while not result == curve:
+	    while result != curve:
 		result = self.mqtt_messenger(topic,pub_topic,pub_msg)
+		print("result",result,"curve",curve)
 	    return result
-
-	"""
-	def setHeatingCurve(self,curve):
-	    client.publish("sonoff_ebus/mc/HeatingCurve/curve/set",curve)#publish
-	    return "bla"
-	"""

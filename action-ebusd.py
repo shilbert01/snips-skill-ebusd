@@ -60,7 +60,7 @@ def action_wrapper(hermes, intentMessage, conf):
 	result_sentence = u'Die Heizkurve ist %s.' %(hcurve)
 
     if intentname == "SetHeatingCurve":
-	hcurve = ebus.setHeatingCurve("0.3")
+	hcurve = ebus.setHeatingCurve("0.30")
 	result_sentence = u'Die Heizkurve wurde auf %s gesetzt.' %(hcurve)
 
     hermes.publish_end_session(intentMessage.session_id, result_sentence.encode('utf-8'))
