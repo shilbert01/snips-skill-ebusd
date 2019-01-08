@@ -63,6 +63,10 @@ def action_wrapper(hermes, intentMessage, conf):
 	hcurve = ebus.setHeatingCurve("0.30")
 	result_sentence = u'Die Heizkurve wurde auf %s gesetzt.' %(hcurve)
 
+    if intentname == "GetHotWaterTemp":
+	hwctemp = ebus.getHotWaterTemp()
+	result_sentence = u'Die Wassertemperatur ist %s.' %(hwctemp)
+
     hermes.publish_end_session(intentMessage.session_id, result_sentence.encode('utf-8'))
 
 if __name__ == "__main__":
