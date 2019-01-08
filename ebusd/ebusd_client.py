@@ -95,7 +95,7 @@ class SnipsEbusd(object):
 		print("result",result,"curve",curve)
 	    return result
 
-    def getHotWaterTemp(self):
+	def getHotWaterTemp(self):
 	    topic = "sonoff_ebus/ehp/hwctemp/temp" #publish
 	    pub_topic,pub_msg = topic+"/get","hwctemp"
 	    result = self.mqtt_messenger(topic,pub_topic,pub_msg)
