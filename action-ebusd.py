@@ -48,11 +48,11 @@ def action_wrapper(hermes, intentMessage, conf):
     ebus = SnipsEbusd(conf["secret"]["ebusd_mqtt_ip"])
 
     if intentname == "SetHwcQuickVetoTemp":
-	conn = ebus.setHwcQuickVetoTemp("52")
+	conn = ebus.setHwcQuickVetoTemp("52.0")
 	result_sentence = u'Die Wassertemperatur wurde auf 52 Grad gesetzt'
 
     if intentname == "GetHwcQuickVetoTemp":
-	conn = ebus.getHwcQuickVetoTemp("52")
+	conn = ebus.getHwcQuickVetoTemp()
 	result_sentence = u'Die QuickVetoTemperatur ist %s Grad.' %(conn)
 
     if intentname == "GetHeatingCurve":
