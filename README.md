@@ -32,7 +32,7 @@ sudo systemctl start snips-skill-server
 
 `Hey Snips`
 
-`Jetzt Wasser heizen.`
+`Ich will duschen.`
 
 ## Logs
 Show snips-skill-server logs with sam:
@@ -50,3 +50,15 @@ Check general platform logs:
 Or on the device:
 
 `snips-watch`
+
+# Configuration
+
+During installation, the assistant will ask for the IP address of the computer running ebusd with mqtt enabled.
+It will further ask for the type of heating sytem (e.g. 1: Calormatic 430, 2:GeoTherm plus VWS)
+This is because different heating system support different subsets of parameters.
+
+Find out more about which parameters are supported by your heating system by running
+
+`ebusctl -f` and/or `ebusctl -f f`
+
+on the device running ebusd.

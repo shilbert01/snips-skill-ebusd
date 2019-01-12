@@ -46,25 +46,27 @@ def action_wrapper(hermes, intentMessage, conf):
     intentname = intentMessage.intent.intent_name.split(':')[1]
 
     ebus = SnipsEbusd(conf["secret"]["ebusd_mqtt_ip"])
-
-    if intentname == "SetHwcQuickVetoTemp":
-	conn = ebus.setHwcQuickVetoTemp("52.0")
-	result_sentence = u'Die Wassertemperatur wurde auf 52 Grad gesetzt'
+    hs = SnipsEbusd(conf["secret"]["heating_system"])
+    prefix = SnipsEbusd(conf["secret"]["mqtt_prefix"])
 
     if intentname == "GetHwcQuickVetoTemp":
-	conn = ebus.getHwcQuickVetoTemp()
+	conn = ebus.getHwcQuickVetoTemp(hs,prefix)
 	result_sentence = u'Die QuickVetoTemperatur ist %s Grad.' %(conn)
 
+    if intentname == "SetHwcQuickVetoTemp":
+	conn = ebus.setHwcQuickVetoTemp("52.0",hs,prefix)
+	result_sentence = u'Die Wassertemperatur wurde auf 52 Grad gesetzt'
+
     if intentname == "GetHeatingCurve":
-	hcurve = ebus.getHeatingCurve()
+	hcurve = ebus.getHeatingCurve(hs,prefix)
 	result_sentence = u'Die Heizkurve ist %s.' %(hcurve)
 
     if intentname == "SetHeatingCurve":
-	hcurve = ebus.setHeatingCurve("0.30")
+	hcurve = ebus.setHeatingCurve("0.30",hs,prefix)
 	result_sentence = u'Die Heizkurve wurde auf %s gesetzt.' %(hcurve)
 
     if intentname == "GetHotWaterTemp":
-	hwctemp = ebus.getHotWaterTemp()
+	hwctemp = ebus.getHotWaterTemp(hs,prefix)
 	result_sentence = u'Die Wassertemperatur ist %s.' %(hwctemp)
 
     hermes.publish_end_session(intentMessage.session_id, result_sentence.encode('utf-8'))

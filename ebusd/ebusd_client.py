@@ -22,9 +22,6 @@ def on_connect(client, userdata, flags, rc):
 def on_message(client, userdata, message):
 	client.on_message_flag=True #set flag
 	print("received message =",str(message.payload.decode("utf-8")))
-	file = open('/home/pi/onmessagefile.txt','w') 
-	file.write(str(message.payload.decode("utf-8")))
-	file.close()
 	q.put(str(message.payload.decode("utf-8")))
 
 class SnipsEbusd(object):
@@ -65,39 +62,59 @@ class SnipsEbusd(object):
 	    client.disconnect() #disconnect
 	    return results
 
-	def getHwcQuickVetoTemp(self):
-	    topic = "ebusd/430/HwcQuickVetoTemp" #publish
-	    pub_topic, pub_msg = topic+"/get", "HwcQuickVetoTemp"
+	def getHwcQuickVetoTemp(self,hs,prefix):
+	    if hs == '1':
+		param = "HwcQuickVetoTemp" #publish
+		topic = prefix+"/430/"+param
+	    else:
+		return "Das wurde für diese Heizungsanlage noch nicht implementiert"
+	    pub_topic, pub_msg = topic+"/get", param
 	    result = self.mqtt_messenger(topic,pub_topic,pub_msg)
 	    return result
 
-	def setHwcQuickVetoTemp(self,temp):
+	def setHwcQuickVetoTemp(self,temp,hs,prefix):
 	    result = 0
-	    topic = "ebusd/430/HwcQuickVetoTemp"#publish
+	    if hs == '1':
+		param = "HwcQuickVetoTemp"
+		topic = prefix+"/430/"+param
+	    else:
+		return "Das wurde für diese Heizungsanlage noch nicht implementiert"
 	    pub_topic, pub_msg = topic+"/set", temp
 	    while result != temp:
 		result = self.mqtt_messenger(topic,pub_topic,pub_msg)
 		print("result",result,"temp",temp)
 	    return result
 
-	def getHeatingCurve(self):
-	    topic = "sonoff_ebus/mc/HeatingCurve/curve" #publish
-	    pub_topic,pub_msg = topic+"/get","HeatingCurve"
+	def getHeatingCurve(self,hs,prefix):
+	    if hs == '1':
+		return "Das wurde für diese Heizungsanlage noch nicht implementiert"
+	    elif hs == '2':
+		param, subparam = "HeatingCurve", "curve"
+		topic = prefix+"/mc/"+param+"/"+subparam #publish
+	    pub_topic,pub_msg = topic+"/get",param
 	    result = self.mqtt_messenger(topic,pub_topic,pub_msg)
 	    return result
 
-	def setHeatingCurve(self,curve):
+	def setHeatingCurve(self,curve,hs,prefix):
 	    result = 0
-	    topic = "sonoff_ebus/mc/HeatingCurve/curve" #publish
+	    if hs == '1':
+		return "Das wurde für diese Heizungsanlage noch nicht implementiert"
+	    elif hs == '2':
+		param, subparam = "HeatingCurve", "curve"
+		topic = prefix+"/mc/"+param+"/"+subparam #publish
 	    pub_topic, pub_msg = topic+"/set", curve
 	    while result != curve:
 		result = self.mqtt_messenger(topic,pub_topic,pub_msg)
 		print("result",result,"curve",curve)
 	    return result
 
-	def getHotWaterTemp(self):
+	def getHotWaterTemp(self,hs,prefix):
 	    result = 0
-	    topic = "sonoff_ebus/ehp/HwcTemp/temp" #publish
-	    pub_topic,pub_msg = topic+"/get","HwcTemp"
+	    if hs == '1':
+		return "Das wurde für diese Heizungsanlage noch nicht implementiert"
+	    elif hs == '2':
+		param, subparam = "HwcTemp", "temp"
+		topic = prefix+"/ehp/"+param+"/"+subparam #publish
+	    pub_topic,pub_msg = topic+"/get",param
 	    result = self.mqtt_messenger(topic,pub_topic,pub_msg)
 	    return result
