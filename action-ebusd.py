@@ -45,28 +45,34 @@ def action_wrapper(hermes, intentMessage, conf):
     """
     intentname = intentMessage.intent.intent_name.split(':')[1]
 
-    ebus = SnipsEbusd(conf["secret"]["ebusd_mqtt_ip"])
-    hs = SnipsEbusd(conf["secret"]["heating_system"])
-    prefix = SnipsEbusd(conf["secret"]["mqtt_prefix"])
+    ebus = SnipsEbusd(conf["secret"]["ebusd_mqtt_ip"],conf["secret"]["heating_system"],conf["secret"]["mqtt_prefix"])
 
     if intentname == "GetHwcQuickVetoTemp":
-	conn = ebus.getHwcQuickVetoTemp(hs,prefix)
+	conn = ebus.getHwcQuickVetoTemp()
 	result_sentence = u'Die QuickVetoTemperatur ist %s Grad.' %(conn)
 
     if intentname == "SetHwcQuickVetoTemp":
-	conn = ebus.setHwcQuickVetoTemp("52.0",hs,prefix)
+	conn = ebus.setHwcQuickVetoTemp("52.0")
 	result_sentence = u'Die Wassertemperatur wurde auf 52 Grad gesetzt'
 
     if intentname == "GetHeatingCurve":
-	hcurve = ebus.getHeatingCurve(hs,prefix)
-	result_sentence = u'Die Heizkurve ist %s.' %(hcurve)
+	hcurve, status = ebus.getHeatingCurve()
+	if status == 0:
+	    print("status:",status)
+	    result_sentence = 'Diese Funktion ist für dieses Heizungssystem noch nicht implementiert'
+	    result_sentence.decode('utf-8')
+	    print result_sentence
+	elif status == 1:
+	    result_sentence = u'Die Heizkurve ist %s.' %(hcurve)
+	else:
+	    result_sentence = u'Irgendwas ging schief beim Bestimmen der Heizkurve'
 
     if intentname == "SetHeatingCurve":
-	hcurve = ebus.setHeatingCurve("0.30",hs,prefix)
+	hcurve = ebus.setHeatingCurve("0.30")
 	result_sentence = u'Die Heizkurve wurde auf %s gesetzt.' %(hcurve)
 
     if intentname == "GetHotWaterTemp":
-	hwctemp = ebus.getHotWaterTemp(hs,prefix)
+	hwctemp = ebus.getHotWaterTemp()
 	result_sentence = u'Die Wassertemperatur ist %s.' %(hwctemp)
 
     hermes.publish_end_session(intentMessage.session_id, result_sentence.encode('utf-8'))
