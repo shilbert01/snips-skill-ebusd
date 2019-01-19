@@ -1,3 +1,6 @@
+#!/usr/bin/env python2
+# -*- coding: utf-8 -*-
+
 import time
 import paho.mqtt.client as mqtt
 from queue import Queue
@@ -25,8 +28,10 @@ def on_message(client, userdata, message):
 	q.put(str(message.payload.decode("utf-8")))
 
 class SnipsEbusd(object):
-	def __init__(self, ipaddress):
+	def __init__(self, ipaddress, heating_system, ebus_prefix):
 	    self.broker_ip = ipaddress
+	    self.hs = heating_system
+	    self.prefix = ebus_prefix
 	    mqtt.Client.connected_flag=False # create flag in class
 	    mqtt.Client.bad_connection_flag=False
 
@@ -62,21 +67,21 @@ class SnipsEbusd(object):
 	    client.disconnect() #disconnect
 	    return results
 
-	def getHwcQuickVetoTemp(self,hs,prefix):
-	    if hs == '1':
+	def getHwcQuickVetoTemp(self):
+	    if self.hs == '1':
 		param = "HwcQuickVetoTemp" #publish
-		topic = prefix+"/430/"+param
+		topic = self.prefix+"/430/"+param
 	    else:
 		return "Das wurde für diese Heizungsanlage noch nicht implementiert"
 	    pub_topic, pub_msg = topic+"/get", param
 	    result = self.mqtt_messenger(topic,pub_topic,pub_msg)
 	    return result
 
-	def setHwcQuickVetoTemp(self,temp,hs,prefix):
+	def setHwcQuickVetoTemp(self,temp):
 	    result = 0
-	    if hs == '1':
+	    if self.hs == '1':
 		param = "HwcQuickVetoTemp"
-		topic = prefix+"/430/"+param
+		topic = self.prefix+"/430/"+param
 	    else:
 		return "Das wurde für diese Heizungsanlage noch nicht implementiert"
 	    pub_topic, pub_msg = topic+"/set", temp
@@ -85,36 +90,36 @@ class SnipsEbusd(object):
 		print("result",result,"temp",temp)
 	    return result
 
-	def getHeatingCurve(self,hs,prefix):
-	    if hs == '1':
-		return "Das wurde für diese Heizungsanlage noch nicht implementiert"
+	def getHeatingCurve(self):
+	    if self.hs == '1':
+		return "",0
 	    elif hs == '2':
 		param, subparam = "HeatingCurve", "curve"
-		topic = prefix+"/mc/"+param+"/"+subparam #publish
+		topic = self.prefix+"/mc/"+param+"/"+subparam #publish
 	    pub_topic,pub_msg = topic+"/get",param
 	    result = self.mqtt_messenger(topic,pub_topic,pub_msg)
-	    return result
+	    return result, 1
 
-	def setHeatingCurve(self,curve,hs,prefix):
+	def setHeatingCurve(self,curve):
 	    result = 0
-	    if hs == '1':
+	    if self.hs == '1':
 		return "Das wurde für diese Heizungsanlage noch nicht implementiert"
 	    elif hs == '2':
 		param, subparam = "HeatingCurve", "curve"
-		topic = prefix+"/mc/"+param+"/"+subparam #publish
+		topic = self.prefix+"/mc/"+param+"/"+subparam #publish
 	    pub_topic, pub_msg = topic+"/set", curve
 	    while result != curve:
 		result = self.mqtt_messenger(topic,pub_topic,pub_msg)
 		print("result",result,"curve",curve)
 	    return result
 
-	def getHotWaterTemp(self,hs,prefix):
+	def getHotWaterTemp(self):
 	    result = 0
-	    if hs == '1':
+	    if self.hs == '1':
 		return "Das wurde für diese Heizungsanlage noch nicht implementiert"
 	    elif hs == '2':
 		param, subparam = "HwcTemp", "temp"
-		topic = prefix+"/ehp/"+param+"/"+subparam #publish
+		topic = self.prefix+"/ehp/"+param+"/"+subparam #publish
 	    pub_topic,pub_msg = topic+"/get",param
 	    result = self.mqtt_messenger(topic,pub_topic,pub_msg)
 	    return result
