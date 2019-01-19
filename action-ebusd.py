@@ -41,31 +41,34 @@ def action_wrapper(hermes, intentMessage, conf):
     - hermes : an object with methods to communicate with the MQTT bus following the hermes protocol. 
     - conf : a dictionary that holds the skills parameters you defined 
 
-    Refer to the documentation for further details. 
+    Refer to the documentation for further details.
     """
     intentname = intentMessage.intent.intent_name.split(':')[1]
 
     ebus = SnipsEbusd(conf["secret"]["ebusd_mqtt_ip"],conf["secret"]["heating_system"],conf["secret"]["mqtt_prefix"])
 
+    niy = 'Diese Funktion ist fuer dieses Heizungssystem noch nicht implementiert'
+
     if intentname == "GetHwcQuickVetoTemp":
-	conn = ebus.getHwcQuickVetoTemp()
-	result_sentence = u'Die QuickVetoTemperatur ist %s Grad.' %(conn)
+	qwt = ebus.getHwcQuickVetoTemp()
+	if qwt is None:
+	    result_sentence = niy
+	else:
+	    result_sentence = u'Die QuickVetoTemperatur ist %s Grad.' %(qwt)
 
     if intentname == "SetHwcQuickVetoTemp":
 	conn = ebus.setHwcQuickVetoTemp("52.0")
-	result_sentence = u'Die Wassertemperatur wurde auf 52 Grad gesetzt'
+	if conn is None:
+	    result_sentence = niy
+	else:
+	    result_sentence = u'Die Wassertemperatur wurde auf 52 Grad gesetzt'
 
     if intentname == "GetHeatingCurve":
-	hcurve, status = ebus.getHeatingCurve()
-	if status == 0:
-	    print("status:",status)
-	    result_sentence = 'Diese Funktion ist für dieses Heizungssystem noch nicht implementiert'
-	    result_sentence.decode('utf-8')
-	    print result_sentence
-	elif status == 1:
-	    result_sentence = u'Die Heizkurve ist %s.' %(hcurve)
+	hcurve = ebus.getHeatingCurve()
+	if hcurve is None:
+	    result_sentence = niy
 	else:
-	    result_sentence = u'Irgendwas ging schief beim Bestimmen der Heizkurve'
+	    result_sentence = u'Die Heizkurve ist %s.' %(hcurve)
 
     if intentname == "SetHeatingCurve":
 	hcurve = ebus.setHeatingCurve("0.30")
@@ -73,7 +76,7 @@ def action_wrapper(hermes, intentMessage, conf):
 
     if intentname == "GetHotWaterTemp":
 	hwctemp = ebus.getHotWaterTemp()
-	result_sentence = u'Die Wassertemperatur ist %s.' %(hwctemp)
+	result_sentence = u'Die Wassertemperatur ist %s Grad.' %(int(round(float(hwctemp))))
 
     hermes.publish_end_session(intentMessage.session_id, result_sentence.encode('utf-8'))
 

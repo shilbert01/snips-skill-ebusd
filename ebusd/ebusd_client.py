@@ -72,7 +72,7 @@ class SnipsEbusd(object):
 		param = "HwcQuickVetoTemp" #publish
 		topic = self.prefix+"/430/"+param
 	    else:
-		return "Das wurde für diese Heizungsanlage noch nicht implementiert"
+		return None
 	    pub_topic, pub_msg = topic+"/get", param
 	    result = self.mqtt_messenger(topic,pub_topic,pub_msg)
 	    return result
@@ -83,7 +83,7 @@ class SnipsEbusd(object):
 		param = "HwcQuickVetoTemp"
 		topic = self.prefix+"/430/"+param
 	    else:
-		return "Das wurde für diese Heizungsanlage noch nicht implementiert"
+		return None
 	    pub_topic, pub_msg = topic+"/set", temp
 	    while result != temp:
 		result = self.mqtt_messenger(topic,pub_topic,pub_msg)
@@ -91,22 +91,22 @@ class SnipsEbusd(object):
 	    return result
 
 	def getHeatingCurve(self):
-	    if self.hs == '1':
-		return "",0
-	    elif hs == '2':
+	    if self.hs == '2':
 		param, subparam = "HeatingCurve", "curve"
 		topic = self.prefix+"/mc/"+param+"/"+subparam #publish
+	    else:
+		return None
 	    pub_topic,pub_msg = topic+"/get",param
 	    result = self.mqtt_messenger(topic,pub_topic,pub_msg)
-	    return result, 1
+	    return result
 
 	def setHeatingCurve(self,curve):
 	    result = 0
-	    if self.hs == '1':
-		return "Das wurde für diese Heizungsanlage noch nicht implementiert"
-	    elif hs == '2':
+	    if self.hs == '2':
 		param, subparam = "HeatingCurve", "curve"
 		topic = self.prefix+"/mc/"+param+"/"+subparam #publish
+	    else:
+		return None
 	    pub_topic, pub_msg = topic+"/set", curve
 	    while result != curve:
 		result = self.mqtt_messenger(topic,pub_topic,pub_msg)
@@ -115,11 +115,11 @@ class SnipsEbusd(object):
 
 	def getHotWaterTemp(self):
 	    result = 0
-	    if self.hs == '1':
-		return "Das wurde für diese Heizungsanlage noch nicht implementiert"
-	    elif hs == '2':
+	    if self.hs == '2':
 		param, subparam = "HwcTemp", "temp"
 		topic = self.prefix+"/ehp/"+param+"/"+subparam #publish
+	    else:
+		return None
 	    pub_topic,pub_msg = topic+"/get",param
 	    result = self.mqtt_messenger(topic,pub_topic,pub_msg)
 	    return result
