@@ -13,6 +13,10 @@ from ebusd.ebusd_client import SnipsEbusd
 CONFIGURATION_ENCODING_FORMAT = "utf-8"
 CONFIG_INI = "config.ini"
 
+# each intent has a language associated with it
+# extract language of first intent of assistant since there should only be one language per assistant
+lang = json.load(open('/usr/share/snips/assistant/assistant.json'))['intents'][0]['language'] 
+
 class SnipsConfigParser(ConfigParser.SafeConfigParser):
     def to_dict(self):
         return {section : {option_name : option for option_name, option in self.items(section)} for section in self.sections()}
@@ -47,36 +51,73 @@ def action_wrapper(hermes, intentMessage, conf):
 
     ebus = SnipsEbusd(conf["secret"]["ebusd_mqtt_ip"],conf["secret"]["heating_system"],conf["secret"]["mqtt_prefix"])
 
-    niy = 'Diese Funktion ist fuer dieses Heizungssystem noch nicht implementiert'
+    niy_de = 'Diese Funktion ist fuer dieses Heizungssystem noch nicht implementiert'
+    niy_en = 'This feature has not yet been implemented for this heating system'
 
     if intentname == "GetHwcQuickVetoTemp":
 	qwt = ebus.getHwcQuickVetoTemp()
 	if qwt is None:
-	    result_sentence = niy
+	    if lang == 'de':
+		result_sentence = niy_de
+	    elif lang == 'en':
+		result_sentence = niy_en
 	else:
-	    result_sentence = u'Die QuickVetoTemperatur ist %s Grad.' %(qwt)
+	    if lang == 'de':
+		result_sentence = u'Die QuickVetoTemperatur ist %s Grad.' %(qwt)
+	    elif lang == 'en':
+		result_sentence = u'The QuickVetoTempetarue is %s.' %(qwt)
 
     if intentname == "SetHwcQuickVetoTemp":
 	conn = ebus.setHwcQuickVetoTemp("52.0")
 	if conn is None:
-	    result_sentence = niy
+	    if lang == 'de':
+		result_sentence = niy_de
+	    elif lang == 'en':
+		result_sentence = niy_en
 	else:
-	    result_sentence = u'Die Wassertemperatur wurde auf 52 Grad gesetzt'
+	    if lang == 'de':
+		result_sentence = u'Die Wassertemperatur wurde auf 52 Grad gesetzt'
+	    elif lang == 'en':
+		result_sentence = u'The hot water temperature has been set to 52 degree'
 
     if intentname == "GetHeatingCurve":
 	hcurve = ebus.getHeatingCurve()
 	if hcurve is None:
-	    result_sentence = niy
+	    if lang == 'de':
+		result_sentence = niy_de
+	    elif lang == 'en':
+		result_sentence = niy_en
 	else:
-	    result_sentence = u'Die Heizkurve ist %s.' %(hcurve)
+	    if lang == 'de':
+		result_sentence = u'Die Heizkurve ist %s.' %(hcurve)
+	    elif lang == 'en':
+		result_sentence = u'The heating curve is %s.' %(hcurve)
 
     if intentname == "SetHeatingCurve":
 	hcurve = ebus.setHeatingCurve("0.30")
-	result_sentence = u'Die Heizkurve wurde auf %s gesetzt.' %(hcurve)
+	if hcurve is None:
+	    if lang == 'de':
+		result_sentence = niy_de
+	    elif lang == 'en':
+		result_sentence = niy_en
+	else:
+	    if lang == 'de':
+		result_sentence = u'Die Heizkurve wurde auf %s gesetzt.' %(hcurve)
+	    elif lang == 'en':
+		result_sentence = u'The heating curve has been set to %s.' %(hcurve)
 
     if intentname == "GetHotWaterTemp":
 	hwctemp = ebus.getHotWaterTemp()
-	result_sentence = u'Die Wassertemperatur ist %s Grad.' %(int(round(float(hwctemp))))
+	if hwctemp is None:
+	    if lang == 'de':
+		result_sentence = niy_de
+	    elif lang == 'en':
+		result_sentence = niy_en
+	else:
+	    if lang == 'de':
+		result_sentence = u'Die Wassertemperatur ist %s Grad.' %(int(round(float(hwctemp))))
+	    elif lang == 'en':
+		result_sentence = u'The hot water temperature is %s degree.' %(int(round(float(hwctemp))))
 
     hermes.publish_end_session(intentMessage.session_id, result_sentence.encode('utf-8'))
 
