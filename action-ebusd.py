@@ -1,4 +1,5 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python2
+
 # -*- coding: utf-8 -*-
 
 # complete ebuds API is at https://github.com/john30/ebusd/wiki/3.3.-MQTT-client
@@ -6,7 +7,7 @@
 import ConfigParser
 from hermes_python.hermes import Hermes
 from hermes_python.ontology import *
-import io
+import io, json
 from ebusd.ebusd_client import SnipsEbusd
 
 
