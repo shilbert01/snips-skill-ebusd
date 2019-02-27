@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 # complete ebuds API is at https://github.com/john30/ebusd/wiki/3.3.-MQTT-client
