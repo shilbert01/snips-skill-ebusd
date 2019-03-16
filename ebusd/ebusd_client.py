@@ -56,12 +56,15 @@ class SnipsEbusd(object):
 		    client.loop_stop()     # Stop loop
 		    return "An error occured during mqtt connection. Bad connection return code was raised"
 	    print("In Main loop")
+	    print "subscribing to topic: %s" %subscription_topic
 	    client.subscribe(subscription_topic)#subscribe
 	    ret = client.publish(pub_topic,pub_msg,0)#publish
-	    print("publish",ret)
+	    print("publish just happened:",ret)
+	    print "sleeping some"
 	    time.sleep(1)
 	    while not q.empty():
 		results = q.get()
+		print results
 	    print("message payload",results)
 	    client.loop_stop() #stop loop
 	    client.disconnect() #disconnect
@@ -94,10 +97,14 @@ class SnipsEbusd(object):
 	    if self.hs == '2':
 		param, subparam = "HeatingCurve", "curve"
 		topic = self.prefix+"/mc/"+param+"/"+subparam #publish
+	    elif self.hs == '1':
+		param = "Hc1HeatCurve"
+		topic = self.prefix+"/430/"+param #publish
 	    else:
 		return None
 	    pub_topic,pub_msg = topic+"/get",param
 	    result = self.mqtt_messenger(topic,pub_topic,pub_msg)
+	    print result
 	    return result
 
 	def setHeatingCurve(self,curve):
@@ -118,8 +125,12 @@ class SnipsEbusd(object):
 	    if self.hs == '2':
 		param, subparam = "HwcTemp", "temp"
 		topic = self.prefix+"/ehp/"+param+"/"+subparam #publish
+	    elif self.hs == '1':
+		param = "HwcTemp"
+		topic = self.prefix+"/bai/"+param #publish
 	    else:
 		return None
 	    pub_topic,pub_msg = topic+"/get",param
 	    result = self.mqtt_messenger(topic,pub_topic,pub_msg)
-	    return result
+	    # unfortunately results often come as temp;ok so we need to obtain the first part
+	    return result.split(";")[0]
